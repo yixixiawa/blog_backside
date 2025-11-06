@@ -1,24 +1,30 @@
 package main
 
 import (
-	"fmt"
+	"log"
+	"sqlite_test/AutoMigrate"
+	"sqlite_test/controller"
 	"sqlite_test/database"
-
-	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	fmt.Println("应用程序启动...")
-
-	// 初始化数据库
+	// 初始化DB/Redis（修改 Init 函数以返回 error 更可靠）
 	database.InitSQLite()
 	database.InitRedis()
-	// 自动构建/迁移
-	// 初始化路由
-	router := gin.Default()
 
-	fmt.Println("应用程序启动完成")
+	// 自动迁移
+	AutoMigrate.Generation_sql()
 
-	fmt.Println("应用程序启动完成")
-	router.Run(":18800")
+	// 使用 controller 提供的引擎（已注册路由）
+	router := controller.InitializeServer()
+
+	// 可选：打印已注册路由用于调试
+	for _, r := range router.Routes() {
+		log.Printf("%s %s\n", r.Method, r.Path)
+	}
+
+	// 启动
+	if err := router.Run(":18800"); err != nil {
+		log.Fatal(err)
+	}
 }

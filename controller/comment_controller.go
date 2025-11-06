@@ -81,14 +81,14 @@ func UpdateComment(c *gin.Context) {
 
 	// 只更新评论内容
 	var updateData struct {
-		Content string `json:"content" binding:"required"`
+		CommentText string `json:"content" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&updateData); err != nil {
 		constants.SendResponse(c, constants.UserBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	existingComment.Content = updateData.Content
+	existingComment.CommentText = updateData.CommentText
 	if err := database.DB.Save(&existingComment).Error; err != nil {
 		constants.SendResponse(c, constants.UserSystemError, gin.H{"error": err.Error()})
 		return

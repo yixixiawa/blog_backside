@@ -42,13 +42,20 @@ func InitSQLite() {
 		panic("连接数据库失败，详细错误: " + openErr.Error())
 	}
 
-	// 自动迁移表结构
-	err = DB.AutoMigrate(&Model.User{})
+	// 自动迁移所有表结构
+	err = DB.AutoMigrate(
+		&Model.User{},
+		&Model.Tag{},
+		&Model.Content{},
+		&Model.FileRecord{},
+		&Model.ContentTag{},
+		&Model.Comment{},
+	)
 	if err != nil {
 		log.Fatal("自动迁移表结构失败:", err)
 	}
 
-	fmt.Println("成功连接到数据库并创建表结构")
+	fmt.Println("成功连接到数据库并创建所有表结构")
 }
 
 // 测试文件权限

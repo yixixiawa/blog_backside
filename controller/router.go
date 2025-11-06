@@ -9,6 +9,12 @@ import (
 // 认证
 
 func InitRoutes(r *gin.Engine) {
+	fileUploadgroup := r.Group("/file")
+	{
+		fileUploadgroup.POST("/upload", UploadFile)
+		fileUploadgroup.GET("/img/:name", DownloadImage)
+	}
+
 	// 用户相关路由
 	userGroup := r.Group("/user")
 	{

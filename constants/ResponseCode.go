@@ -253,3 +253,23 @@ func (e EmailStatusCode) GetMessage() string {
 		return "未知错误"
 	}
 }
+
+type FileStatusCode int
+
+const (
+	FFileUploadSuccess FileStatusCode = 200
+	FileUploadFailed   FileStatusCode = 410
+)
+
+func (f FileStatusCode) GetCode() int { return int(f) }
+
+func (f FileStatusCode) GetMessage() string {
+	switch f {
+	case FFileUploadSuccess:
+		return "文件上传成功"
+	case FileUploadFailed:
+		return "文件上传失败"
+	default:
+		return "未知错误"
+	}
+}

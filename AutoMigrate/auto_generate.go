@@ -2,83 +2,55 @@ package AutoMigrate
 
 import (
 	"fmt"
+	"log"
 	"sqlite_test/Model"
 	"sqlite_test/database"
 )
 
-// 定义模型初始化顺序
-type migrationStep struct {
-	model    interface{}
-	name     string
-	depends  []string
-	migrated bool
-}
-
 func Generation_sql() {
-	fmt.Println("开始自动生成SQL表结构")
+	fmt.Println("=== 开始数据库迁移 ===")
 
-	// 定义迁移步骤及其依赖关系
-	steps := []migrationStep{
+	// 测试数据库连接
+	sqlDB, err := database.DB.DB()
+	if err != nil {
+		log.Fatalf("获取数据库连接失败: %v", err)
+	}
+
+	if err := sqlDB.Ping(); err != nil {
+		log.Fatalf("数据库连接测试失败: %v", err)
+	}
+	fmt.Println("数据库连接正常")
+
+	// 所有模型列表
+	models := []struct {
+		model interface{}
+		name  string
+	}{
 		{model: &Model.User{}, name: "User"},
 		{model: &Model.Tag{}, name: "Tag"},
-		{model: &Model.Content{}, name: "Content", depends: []string{"User"}},
-		{model: &Model.ContentTag{}, name: "ContentTag", depends: []string{"Content", "Tag"}},
-		{model: &Model.Comment{}, name: "Comment", depends: []string{"User", "Content"}},
-		{model: &Model.FileRecord{}, name: "FileRecord", depends: []string{"User"}},
+		{model: &Model.Content{}, name: "Content"},
+		{model: &Model.FileRecord{}, name: "FileRecord"},
+		{model: &Model.ContentTag{}, name: "ContentTag"},
+		{model: &Model.Comment{}, name: "Comment"},
 	}
 
-	// 执行迁移，直到所有模型都已迁移或无法继续
-	for {
-		migratedSomething := false
-		allMigrated := true
+	successCount := 0
+	for _, m := range models {
+		fmt.Printf("\n--- 迁移 %s 表 ---\n", m.name)
 
-		for i := range steps {
-			if steps[i].migrated {
-				continue
+		// 执行迁移
+		if err := database.DB.AutoMigrate(m.model); err != nil {
+			fmt.Printf("❌ %s 表迁移失败: %v\n", m.name, err)
+
+			// 尝试获取更详细的错误信息
+			if err := database.DB.Exec("SELECT 1").Error; err != nil {
+				fmt.Printf("数据库连接异常: %v\n", err)
 			}
-
-			canMigrate := true
-			// 检查依赖是否已经迁移
-			for _, dep := range steps[i].depends {
-				dependencyMigrated := false
-				for _, s := range steps {
-					if s.name == dep && s.migrated {
-						dependencyMigrated = true
-						break
-					}
-				}
-				if !dependencyMigrated {
-					canMigrate = false
-					break
-				}
-			}
-
-			if canMigrate {
-				fmt.Printf("正在生成 %s 表结构...\n", steps[i].name)
-				if err := database.DB.AutoMigrate(steps[i].model); err != nil {
-					fmt.Printf("自动生成 %s 表结构失败: %v\n", steps[i].name, err)
-					return
-				}
-				steps[i].migrated = true
-				migratedSomething = true
-				fmt.Printf("成功生成 %s 表结构\n", steps[i].name)
-			} else {
-				allMigrated = false
-			}
-		}
-
-		// 如果所有模型都已迁移或者本轮没有进行任何迁移，则退出
-		if allMigrated || !migratedSomething {
-			break
+		} else {
+			fmt.Printf("✅ %s 表迁移成功\n", m.name)
+			successCount++
 		}
 	}
 
-	// 验证所有模型是否都已迁移
-	for _, step := range steps {
-		if !step.migrated {
-			fmt.Printf("警告：%s 表结构未能生成，可能存在循环依赖\n", step.name)
-		}
-	}
-
-	fmt.Println("所有表结构自动生成完成")
+	fmt.Printf("\n=== 迁移完成: %d/%d 表成功 ===\n", successCount, len(models))
 }
