@@ -1,0 +1,11 @@
+redis:
+  host: 127.0.0.1
+  port: "6379"
+  password: ""
+  db: 0
+
+email:
+  host: smtp.qq.com        # QQ邮箱SMTP服务器
+  port: 587                # SMTP端口
+  username: tothewhisper@qq.com  # 你的邮箱
+  password: xrmtkfzqzpxjciab     # QQ邮箱授权码
