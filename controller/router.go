@@ -86,6 +86,11 @@ func InitRoutes(r *gin.Engine) {
 		emailGroup.POST("/verify", SendVerificationEmail)
 		emailGroup.POST("/verify/check", CheckVerificationCode)
 	}
+
+	goodsGroup := r.Group("/goods")
+	{
+		goodsGroup.GET("/items", search_goods)
+	}
 }
 
 func SetupMiddlewares(r *gin.Engine) {
