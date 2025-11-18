@@ -9,11 +9,22 @@ import (
 // 认证
 
 func InitRoutes(r *gin.Engine) {
-	fileUploadgroup := r.Group("/file")
+	fileGroup := r.Group("/file")
 	{
-		fileUploadgroup.POST("/upload", UploadFile)
-		fileUploadgroup.GET("/img/:name", DownloadImage)
+		// 公开访问
+		fileGroup.GET("/list", ListImages)              // 获取所有图片
+		fileGroup.GET("/content/:id", GetContentImages) // 根据文章ID获取图片
+
+		// 需要认证的上传接口
+		authFile := fileGroup.Group("")
+		authFile.Use(utils.JWTAuthMiddleware())
+		{
+			authFile.POST("/upload", UploadFile) // 上传图片
+		}
 	}
+
+	// 静态文件服务，用于直接访问上传的图片
+	r.Static("/img", GetImageStoragePath())
 
 	// 用户相关路由
 	userGroup := r.Group("/user")
