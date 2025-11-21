@@ -69,6 +69,7 @@ func UserLogin(c *gin.Context) {
 	tokenKey := fmt.Sprintf("user_token:%d", user.UserID)
 	// 设置过期时间，与 token 的有效期保持一致（这里示例 24 小时）
 	if err := database.SetString(tokenKey, token, 24*time.Hour); err != nil {
+		fmt.Printf("Redis SetString Error: %v\n", err) // 👈 新增：打印具体错误到控制台
 		constants.SendResponse(c, constants.UserSystemError, gin.H{"error": "存储token失败"})
 		return
 	}

@@ -14,9 +14,9 @@ var ctx = context.Background()
 // InitRedis 初始化Redis连接
 func InitRedis() error {
 	RedisClient = redis.NewClient(&redis.Options{
-		Addr:     "127.0.0.1",
-		Password: "", // 没有密码时为空字符串
-		DB:       0,  // 使用默认数据库
+		Addr:     "127.0.0.1:6379",
+		Password: "",
+		DB:       0,
 	})
 
 	// 测试连接
