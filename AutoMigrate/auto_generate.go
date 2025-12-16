@@ -31,7 +31,9 @@ func Generation_sql() {
 		{model: &Model.Content{}, name: "Content"},
 		{model: &Model.FileRecord{}, name: "FileRecord"},
 		{model: &Model.ContentTag{}, name: "ContentTag"},
+		{model: &Model.ContentFile{}, name: "ContentFile"},
 		{model: &Model.Comment{}, name: "Comment"},
+		{model: &Model.EmailVerify{}, name: "EmailVerify"},
 	}
 
 	successCount := 0

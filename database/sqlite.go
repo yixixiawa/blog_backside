@@ -49,7 +49,9 @@ func InitSQLite() {
 		&Model.Content{},
 		&Model.FileRecord{},
 		&Model.ContentTag{},
+		&Model.ContentFile{},
 		&Model.Comment{},
+		&Model.EmailVerify{},
 	)
 	if err != nil {
 		log.Fatal("自动迁移表结构失败:", err)

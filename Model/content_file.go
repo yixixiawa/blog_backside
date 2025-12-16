@@ -3,9 +3,8 @@ package Model
 import "time"
 
 type ContentFile struct {
-	ID        uint      `gorm:"primaryKey;autoIncrement" json:"id"`
-	ContentID uint      `gorm:"not null;index" json:"content_id"`
-	FileID    uint      `gorm:"not null;index" json:"file_id"`
+	ContentID uint      `gorm:"primaryKey;not null" json:"content_id"`
+	FileID    uint      `gorm:"primaryKey;not null" json:"file_id"`
 	Order     int       `gorm:"default:0" json:"order"`
 	Usage     string    `gorm:"type:varchar(50)" json:"usage"`
 	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`

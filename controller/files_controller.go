@@ -34,7 +34,6 @@ func randSuffix(n int) string {
 }
 
 // UploadFile 上传图片文件（仅支持 png/jpg/jpeg，最大 10MB）
-// UploadFile 上传图片文件（仅支持 png/jpg/jpeg，最大 10MB）
 func UploadFile(c *gin.Context) {
 	const maxSize = 10 << 20 // 10MB
 	allowedExt := map[string]bool{".png": true, ".jpg": true, ".jpeg": true}
@@ -142,7 +141,6 @@ func UploadFile(c *gin.Context) {
 		})
 		return
 	}
-
 	constants.SendResponse(c, constants.Success, fr)
 }
 

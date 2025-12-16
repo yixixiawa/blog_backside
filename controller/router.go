@@ -52,7 +52,7 @@ func InitRoutes(r *gin.Engine) {
 		contentGroup.GET("/:id", GetContent)
 
 		// 需要认证的写接口
-		authContent := contentGroup.Group("")
+		authContent := contentGroup.Group("/content_auth")
 		authContent.Use(utils.JWTAuthMiddleware())
 		{
 			authContent.POST("", CreateContent)
@@ -92,12 +92,10 @@ func InitRoutes(r *gin.Engine) {
 
 	// 邮件相关路由（全部需要认证）
 	emailGroup := r.Group("/email")
-	emailGroup.Use(utils.JWTAuthMiddleware())
 	{
 		emailGroup.POST("/verify", SendVerificationEmail)
 		emailGroup.POST("/verify/check", CheckVerificationCode)
 	}
-
 	goodsGroup := r.Group("/goods")
 	{
 		goodsGroup.GET("/items", search_goods)

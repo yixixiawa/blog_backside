@@ -36,9 +36,19 @@ func GetTag(c *gin.Context) {
 
 // ListTags 获取标签列表
 func ListTags(c *gin.Context) {
-	var tags []Model.Tag
+	// 定义一个包含计数的临时结构体
+	type TagWithCount struct {
+		Model.Tag
+		ArticleCount int64 `json:"article_count"`
+	}
+	var tags []TagWithCount
 
-	if err := database.DB.Find(&tags).Error; err != nil {
+	// 联表查询并统计数量
+	if err := database.DB.Table("tags").
+		Select("tags.*, count(content_tags.content_id) as article_count").
+		Joins("LEFT JOIN content_tags ON content_tags.tag_id = tags.tag_id").
+		Group("tags.tag_id").
+		Scan(&tags).Error; err != nil {
 		constants.SendResponse(c, constants.UserSystemError, gin.H{"error": err.Error()})
 		return
 	}

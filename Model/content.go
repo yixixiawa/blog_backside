@@ -5,7 +5,7 @@ import "time"
 type Content struct {
 	ID                uint       `gorm:"primaryKey;autoIncrement" json:"id"`
 	Title             string     `gorm:"type:varchar(255);not null" json:"title"`
-	Content           string     `gorm:"type:text" json:"content"`
+	Content           string     `gorm:"type:text;not null" json:"content"`
 	BriefIntroduction string     `gorm:"type:text" json:"brief_introduction"`
 	UserID            uint       `gorm:"not null" json:"user_id"`
 	CoverImage        string     `gorm:"type:varchar(500)" json:"cover_image"`
@@ -20,7 +20,7 @@ type Content struct {
 
 	// 关联关系
 	User         User          `gorm:"foreignKey:UserID" json:"user,omitempty"`
-	Tags         []Tag         `gorm:"many2many:content_tags;" json:"tags,omitempty"`
+	Tags         []Tag         `gorm:"many2many:content_tags;foreignKey:ID;joinForeignKey:ContentID;References:TagID;joinReferences:TagID" json:"tags,omitempty"`
 	Comments     []Comment     `gorm:"foreignKey:ContentID" json:"comments,omitempty"`
 	Files        []FileRecord  `gorm:"many2many:content_files;foreignKey:ID;joinForeignKey:ContentID;References:FileID;joinReferences:FileID" json:"files,omitempty"`
 	ContentFiles []ContentFile `gorm:"foreignKey:ContentID;references:ID" json:"content_files,omitempty"`

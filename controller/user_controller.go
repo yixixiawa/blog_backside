@@ -20,6 +20,12 @@ func UserRegister(c *gin.Context) {
 		return
 	}
 
+	// 检查用户名是否已存在
+	if err := database.DB.Where("username = ?", user.Username).First(&Model.User{}).Error; err == nil {
+		constants.SendResponse(c, constants.UserConflict, nil)
+		return
+	}
+
 	// 使用密码服务加密密码
 	hashedPassword, err := utils.HashPassword(user.Password)
 	if err != nil {
