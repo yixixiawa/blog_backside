@@ -2,3 +2,5 @@ data
 img
 venv
 *.md
+dockerfile
+.dockerignore
