@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"sqlite_test/constants"
-	"sqlite_test/service"
+	"blog/constants"
+	"blog/service"
 
 	"github.com/gin-gonic/gin"
 )

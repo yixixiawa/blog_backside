@@ -1,11 +1,11 @@
 package database
 
 import (
+	"blog/Model"
 	"fmt"
 	"log"
 	"os"
 	"path/filepath"
-	"sqlite_test/Model"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"

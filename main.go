@@ -1,10 +1,10 @@
 package main
 
 import (
+	"blog/AutoMigrate"
+	"blog/controller"
+	"blog/database"
 	"log"
-	"sqlite_test/AutoMigrate"
-	"sqlite_test/controller"
-	"sqlite_test/database"
 )
 
 func main() {

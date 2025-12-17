@@ -1,9 +1,9 @@
 package utils
 
 import (
+	"blog/constants"
+	"blog/database"
 	"fmt"
-	"sqlite_test/constants"
-	"sqlite_test/database"
 	"strings"
 
 	"github.com/gin-gonic/gin"

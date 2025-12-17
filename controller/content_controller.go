@@ -1,10 +1,10 @@
 package controller
 
 import (
+	"blog/Model"
+	"blog/constants"
+	"blog/database"
 	"fmt"
-	"sqlite_test/Model"
-	"sqlite_test/constants"
-	"sqlite_test/database"
 	"strconv"
 
 	"github.com/gin-gonic/gin"

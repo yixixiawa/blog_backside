@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"sqlite_test/Model"
-	"sqlite_test/constants"
-	"sqlite_test/database"
+	"blog/Model"
+	"blog/constants"
+	"blog/database"
 
 	"github.com/gin-gonic/gin"
 )

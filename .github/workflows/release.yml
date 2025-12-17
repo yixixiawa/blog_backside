@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - 'v*' # 当推送 v 开头的 tag 时触发
+      - 'v*'
 
 jobs:
   build:
@@ -16,19 +16,39 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.21' # 根据你的 go.mod 版本调整
+          go-version: '1.21'
 
-      - name: Build
+      # 修改 Build 步骤：编译后立即打包
+      - name: Build and Package
         run: |
-          GOOS=windows GOARCH=amd64 go build -o sqlite_test-windows-amd64.exe .
-          GOOS=linux GOARCH=amd64 go build -o sqlite_test-linux-amd64 .
-          GOOS=darwin GOARCH=amd64 go build -o sqlite_test-darwin-amd64 .
+          # --- Linux ---
+          echo "Building for Linux..."
+          # 注意：如果使用了 CGO (sqlite3)，交叉编译需要额外配置，这里假设是纯 Go 或已配置好环境
+          CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -ldflags '-extldflags "-static"' -o sqlite_test .
+          # 打包 Linux 版本 (tar.gz)
+          tar -czvf sqlite_test-linux-amd64.tar.gz sqlite_test yaml/ img/
+          rm sqlite_test # 清理临时文件
+
+          # --- macOS ---
+          echo "Building for macOS..."
+          CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o sqlite_test .
+          # 打包 macOS 版本 (tar.gz)
+          tar -czvf sqlite_test-darwin-amd64.tar.gz sqlite_test yaml/ img/
+          rm sqlite_test
+
+          # --- Windows ---
+          echo "Building for Windows..."
+          # Windows 交叉编译 CGO 比较麻烦，这里暂时设为 0，如果必须用 sqlite3，可能需要 zig 或 xgo
+          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o sqlite_test.exe .
+          # 打包 Windows 版本 (zip)
+          zip -r sqlite_test-windows-amd64.zip sqlite_test.exe yaml/ img/
+          rm sqlite_test.exe
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            sqlite_test-windows-amd64.exe
-            sqlite_test-linux-amd64
-            sqlite_test-darwin-amd64
+            sqlite_test-linux-amd64.tar.gz
+            sqlite_test-darwin-amd64.tar.gz
+            sqlite_test-windows-amd64.zip

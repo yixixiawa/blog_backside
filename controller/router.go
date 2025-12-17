@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"sqlite_test/utils"
+	"blog/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,7 +12,7 @@ func InitRoutes(r *gin.Engine) {
 	fileGroup := r.Group("/file")
 	{
 		// 公开访问
-		fileGroup.GET("/list", ListImages)              // 获取所有图片
+		fileGroup.GET("/listimg", ListImages)           // 获取所有图片
 		fileGroup.GET("/content/:id", GetContentImages) // 根据文章ID获取图片
 
 		// 需要认证的上传接口

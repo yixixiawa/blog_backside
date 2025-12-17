@@ -1,10 +1,10 @@
 package AutoMigrate
 
 import (
+	"blog/Model"
+	"blog/database"
 	"fmt"
 	"log"
-	"sqlite_test/Model"
-	"sqlite_test/database"
 )
 
 func Generation_sql() {
