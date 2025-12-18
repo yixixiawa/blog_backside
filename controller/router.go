@@ -19,7 +19,8 @@ func InitRoutes(r *gin.Engine) {
 		authFile := fileGroup.Group("")
 		authFile.Use(utils.JWTAuthMiddleware())
 		{
-			authFile.POST("/upload", UploadFile) // 上传图片
+			authFile.POST("/uploadimg", uploadimg) // 上传图片
+			authFile.POST("/uploadfile", UploadFile)
 		}
 	}
 

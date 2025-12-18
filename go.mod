@@ -7,7 +7,7 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	golang.org/x/crypto v0.43.0
-	gorm.io/driver/sqlite v1.6.0
+	github.com/glebarez/sqlite v0.14.3
 	gorm.io/gorm v1.31.0
 )
 
