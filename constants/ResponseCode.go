@@ -21,7 +21,9 @@ const (
 	UserForbidden    UserStatusCode = 403
 	UserNotFound     UserStatusCode = 404
 	UserConflict     UserStatusCode = 409
+	UserLoginError   UserStatusCode = 422
 	UserSystemError  UserStatusCode = 500
+	UserRedisError   UserStatusCode = 503
 )
 
 func (u UserStatusCode) GetCode() int {
@@ -31,9 +33,9 @@ func (u UserStatusCode) GetCode() int {
 func (u UserStatusCode) GetMessage() string {
 	switch u {
 	case UserSuccess:
-		return "操作成功"
+		return "登录成功"
 	case UserCreated:
-		return "创建成功"
+		return "注册成功"
 	case UserBadRequest:
 		return "参数错误"
 	case UserUnauthorized:
@@ -44,8 +46,12 @@ func (u UserStatusCode) GetMessage() string {
 		return "用户不存在"
 	case UserConflict:
 		return "用户已存在"
+	case UserLoginError:
+		return "账号或密码错误"
 	case UserSystemError:
 		return "系统错误"
+	case UserRedisError:
+		return "服务器服务异常"
 	default:
 		return "未知错误"
 	}

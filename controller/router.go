@@ -39,6 +39,7 @@ func InitRoutes(r *gin.Engine) {
 		{
 			auth.POST("/logout", UserLogout)
 			auth.PUT("/password", ChangePassword)
+			auth.GET("/list", ListUsers) // 获取用户列表
 			auth.GET("/:id", GetUserInfo)
 			auth.PUT("/:id", UpdateUserProfile)
 			auth.DELETE("/:id", DeleteUser)
