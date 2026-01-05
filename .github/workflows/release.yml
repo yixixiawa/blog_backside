@@ -3,10 +3,10 @@ name: Release
 on:
   push:
     tags:
-      - 'v*' # 当推送 v 开头的 tag 时触发，例如 v1.0.0
+      - 'v*' # 只有打 v 开头的 tag 时才触发
 
 permissions:
-  contents: write # 必须赋予写权限才能创建 Release
+  contents: write # 必须赋予写权限，否则无法创建 Release 和上传附件
 
 jobs:
   build:
@@ -19,38 +19,35 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.25' # 建议使用与你本地一致或较新的版本
+          go-version: '1.25'
 
       - name: Build and Package
         run: |
           # --- Linux ---
           echo "Building for Linux..."
-          # 使用 CGO_ENABLED=0 因为使用了纯 Go 的 sqlite (glebarez/sqlite)
-          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o sqlite_test main.go
-          # 打包 Linux 版本 (tar.gz)，包含可执行文件和 img 目录
-          tar -czvf sqlite_test-linux-amd64.tar.gz sqlite_test img/
-          rm sqlite_test
-
-          # --- macOS ---
-          echo "Building for macOS..."
-          CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o sqlite_test main.go
-          # 打包 macOS 版本 (tar.gz)
-          tar -czvf sqlite_test-darwin-amd64.tar.gz sqlite_test img/
-          rm sqlite_test
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o myapp-linux main.go
+          # 打包 Linux 版本 (tar.gz)
+          tar -czvf blog-linux-amd64.tar.gz myapp-linux img/
 
           # --- Windows ---
           echo "Building for Windows..."
-          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o sqlite_test.exe main.go
+          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o myapp-windows.exe main.go
           # 打包 Windows 版本 (zip)
-          zip -r sqlite_test-windows-amd64.zip sqlite_test.exe img/
-          rm sqlite_test.exe
+          zip -r blog-windows-amd64.zip myapp-windows.exe img/
+
+          # --- macOS ---
+          echo "Building for macOS..."
+          CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o myapp-darwin main.go
+          # 打包 macOS 版本 (tar.gz)
+          tar -czvf blog-darwin-amd64.tar.gz myapp-darwin img/
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          # 这里列出的文件必须与上面生成的文件名完全一致
+          # 注意：这里的文件名必须和上面打包生成的文件名完全一致
           files: |
-            sqlite_test-linux-amd64.tar.gz
-            sqlite_test-darwin-amd64.tar.gz
-            sqlite_test-windows-amd64.zip
+            blog-linux-amd64.tar.gz
+            blog-windows-amd64.zip
+            blog-darwin-amd64.tar.gz
+          fail_on_unmatched_files: true
