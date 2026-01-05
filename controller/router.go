@@ -110,7 +110,15 @@ func SetupMiddlewares(r *gin.Engine) {
 		method := c.Request.Method
 		origin := c.Request.Header.Get("Origin")
 
-		if origin != "" {
+		// 安全修正：只允许特定的域名跨域访问，防止本地或其他恶意站点控制服务器
+		// 如果您使用 Nginx 反向代理且前后端同源，建议直接注释掉整个 CORS 中间件
+		allowedOrigins := map[string]bool{
+			"http://yixixiawa.xyz":  true,
+			"https://yixixiawa.xyz": true,
+			// "http://localhost:23357": true, // 本地开发调试时可以打开
+		}
+
+		if origin != "" && allowedOrigins[origin] {
 			c.Header("Access-Control-Allow-Origin", origin)
 			c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE")
 			c.Header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
@@ -118,6 +126,7 @@ func SetupMiddlewares(r *gin.Engine) {
 			c.Header("Access-Control-Allow-Credentials", "true")
 		}
 
+		// 如果是 OPTIONS 请求但 Origin 不在白名单中，也可以选择拒绝，或者保持 204 但不返回 CORS 头
 		if method == "OPTIONS" {
 			c.AbortWithStatus(204)
 			return
