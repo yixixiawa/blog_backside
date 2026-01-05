@@ -6,4 +6,6 @@ dockerfile
 .dockerignore
 docker-compose.yml
 *.yaml
+
 *.exe
+myapp-linux
