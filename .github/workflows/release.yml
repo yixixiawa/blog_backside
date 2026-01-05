@@ -23,6 +23,9 @@ jobs:
 
       - name: Build and Package
         run: |
+          # 确保 img 目录存在 (因为它被 gitignore 忽略了)
+          mkdir -p img
+
           # --- Linux ---
           echo "Building for Linux..."
           CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o myapp-linux main.go
