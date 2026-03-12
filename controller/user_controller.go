@@ -33,6 +33,7 @@ func UserRegister(c *gin.Context) {
 		return
 	}
 	user.Password = hashedPassword
+	user.IsAdmin = false
 
 	// 保存到数据库
 	if err := database.DB.Create(&user).Error; err != nil {

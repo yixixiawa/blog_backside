@@ -102,6 +102,27 @@ func InitRoutes(r *gin.Engine) {
 	{
 		goodsGroup.GET("/items", search_goods)
 	}
+
+	// OAuth第三方认证相关路由
+	oauthGroup := r.Group("/oauth")
+	{
+		// 公开接口：获取平台列表、发起登录、处理回调
+		oauthGroup.GET("/platforms", GetOAuthPlatforms)
+		oauthGroup.GET("/login/:platform", OAuthLogin)
+		oauthGroup.GET("/callback/:platform", OAuthCallback)
+
+		// 需要认证的接口：绑定/解绑/查看绑定列表
+		authOAuth := oauthGroup.Group("")
+		authOAuth.Use(utils.JWTAuthMiddleware())
+		{
+			authOAuth.GET("/bind/:platform", OAuthBind)
+			authOAuth.DELETE("/unbind/:platform", OAuthUnbind)
+			authOAuth.GET("/accounts", GetUserOAuthAccounts)
+
+			// 管理员接口：初始化平台配置
+			authOAuth.POST("/admin/init-github", InitGitHubPlatform)
+		}
+	}
 }
 
 func SetupMiddlewares(r *gin.Engine) {
@@ -113,9 +134,7 @@ func SetupMiddlewares(r *gin.Engine) {
 		// 安全修正：只允许特定的域名跨域访问，防止本地或其他恶意站点控制服务器
 		// 如果您使用 Nginx 反向代理且前后端同源，建议直接注释掉整个 CORS 中间件
 		allowedOrigins := map[string]bool{
-			"http://yixixiawa.xyz":  true,
-			"https://yixixiawa.xyz": true,
-			// "http://localhost:23357": true, // 本地开发调试时可以打开
+			"http://localhost:23357": true,
 		}
 
 		if origin != "" && allowedOrigins[origin] {

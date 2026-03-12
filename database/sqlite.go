@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/glebarez/sqlite"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -52,12 +53,51 @@ func InitSQLite() {
 		&Model.ContentFile{},
 		&Model.Comment{},
 		&Model.EmailVerify{},
+		&Model.OAuthPlatform{},
+		&Model.OAuthAccount{},
+		&Model.OAuthState{},
 	)
 	if err != nil {
 		log.Fatal("自动迁移表结构失败:", err)
 	}
 
+	// 首次运行时创建默认管理员账号
+	initDefaultAdmin()
+
 	fmt.Println("成功连接到数据库并创建所有表结构")
+}
+
+// initDefaultAdmin 首次运行时创建默认管理员用户
+func initDefaultAdmin() {
+	var count int64
+	DB.Model(&Model.User{}).Count(&count)
+
+	// 只有当用户表为空（首次运行）时才创建管理员
+	if count > 0 {
+		return
+	}
+
+	// 默认管理员密码，部署后请立即修改
+	defaultPassword := "admin123456"
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(defaultPassword), bcrypt.DefaultCost)
+	if err != nil {
+		log.Printf("⚠️ 创建默认管理员失败（密码加密错误）: %v\n", err)
+		return
+	}
+
+	admin := Model.User{
+		Username: "admin",
+		Password: string(hashedPassword),
+		Email:    "admin@localhost",
+		IsAdmin:  true,
+	}
+
+	if err := DB.Create(&admin).Error; err != nil {
+		log.Printf("⚠️ 创建默认管理员失败: %v\n", err)
+		return
+	}
+
+	fmt.Println("✅ 已创建默认管理员账号 —— 用户名: admin  密码: admin123456  ⚠️ 请尽快修改密码！")
 }
 
 // 测试文件权限

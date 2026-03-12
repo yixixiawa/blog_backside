@@ -34,6 +34,9 @@ func Generation_sql() {
 		{model: &Model.ContentFile{}, name: "ContentFile"},
 		{model: &Model.Comment{}, name: "Comment"},
 		{model: &Model.EmailVerify{}, name: "EmailVerify"},
+		{model: &Model.OAuthPlatform{}, name: "OAuthPlatform"},
+		{model: &Model.OAuthAccount{}, name: "OAuthAccount"},
+		{model: &Model.OAuthState{}, name: "OAuthState"},
 	}
 
 	successCount := 0

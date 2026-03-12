@@ -26,3 +26,7 @@ func SendTagResponse(c *gin.Context, status TagStatusCode, data interface{}) {
 func SendEmailResponse(c *gin.Context, status EmailStatusCode, data interface{}) {
 	c.JSON(status.GetCode(), BuildResponseWithStatus(status, data))
 }
+
+func SendOAuthResponse(c *gin.Context, status OAuthStatusCode, data interface{}) {
+	c.JSON(status.GetCode(), BuildResponseWithStatus(status, data))
+}

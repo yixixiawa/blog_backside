@@ -11,6 +11,9 @@ type User struct {
 	IsAdmin   bool      `gorm:"not null;default:false" json:"is_admin"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+
+	// 关联关系
+	OAuthAccounts []OAuthAccount `gorm:"foreignKey:UserID;references:UserID" json:"oauth_accounts,omitempty"`
 }
 
 type LoginRequest struct {

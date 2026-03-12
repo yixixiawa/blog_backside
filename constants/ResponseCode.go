@@ -279,3 +279,48 @@ func (f FileStatusCode) GetMessage() string {
 		return "未知错误"
 	}
 }
+
+// OAuthStatusCode OAuth相关状态码
+type OAuthStatusCode int
+
+const (
+	OAuthSuccess          OAuthStatusCode = 200
+	OAuthRedirect         OAuthStatusCode = 302
+	OAuthBadRequest       OAuthStatusCode = 400
+	OAuthUnauthorized     OAuthStatusCode = 401
+	OAuthForbidden        OAuthStatusCode = 403
+	OAuthNotFound         OAuthStatusCode = 404
+	OAuthConflict         OAuthStatusCode = 409
+	OAuthCallbackError    OAuthStatusCode = 422
+	OAuthSystemError      OAuthStatusCode = 500
+	OAuthPlatformDisabled OAuthStatusCode = 503
+)
+
+func (o OAuthStatusCode) GetCode() int { return int(o) }
+
+func (o OAuthStatusCode) GetMessage() string {
+	switch o {
+	case OAuthSuccess:
+		return "OAuth认证成功"
+	case OAuthRedirect:
+		return "重定向到第三方认证"
+	case OAuthBadRequest:
+		return "OAuth请求参数错误"
+	case OAuthUnauthorized:
+		return "OAuth认证失败"
+	case OAuthForbidden:
+		return "OAuth操作被禁止"
+	case OAuthNotFound:
+		return "OAuth平台不存在"
+	case OAuthConflict:
+		return "该第三方账号已被绑定"
+	case OAuthCallbackError:
+		return "OAuth回调处理失败"
+	case OAuthSystemError:
+		return "OAuth系统错误"
+	case OAuthPlatformDisabled:
+		return "该OAuth平台已禁用"
+	default:
+		return "未知错误"
+	}
+}
