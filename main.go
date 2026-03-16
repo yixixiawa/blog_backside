@@ -4,6 +4,7 @@ import (
 	"blog/AutoMigrate"
 	"blog/controller"
 	"blog/database"
+	"blog/security"
 	"log"
 )
 
@@ -24,6 +25,7 @@ func main() {
 	}
 
 	// 启动
+	security.SetupCORSMiddleware()
 	if err := router.Run(":18800"); err != nil {
 		log.Fatal(err)
 	}

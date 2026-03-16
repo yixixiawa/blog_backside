@@ -30,7 +30,6 @@ func InitSQLite() {
 	dbFile := filepath.Join(dataDir, "user.db")
 	fmt.Printf("数据库文件完整路径: %s\n", dbFile)
 
-	// 测试文件权限
 	if err := testFilePermissions(dbFile); err != nil {
 		log.Fatal("文件权限测试失败:", err)
 	}
@@ -61,7 +60,6 @@ func InitSQLite() {
 		log.Fatal("自动迁移表结构失败:", err)
 	}
 
-	// 首次运行时创建默认管理员账号
 	initDefaultAdmin()
 
 	fmt.Println("成功连接到数据库并创建所有表结构")
@@ -78,7 +76,7 @@ func initDefaultAdmin() {
 	}
 
 	// 默认管理员密码，部署后请立即修改
-	defaultPassword := "admin123456"
+	defaultPassword := GenerateMixedCode(12)
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(defaultPassword), bcrypt.DefaultCost)
 	if err != nil {
 		log.Printf("⚠️ 创建默认管理员失败（密码加密错误）: %v\n", err)

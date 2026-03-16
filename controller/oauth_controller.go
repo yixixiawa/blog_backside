@@ -46,7 +46,7 @@ func OAuthLogin(c *gin.Context) {
 	oauthConfig := oauthService.CreateOAuthConfig(platform)
 
 	// 3. 生成随机state（防止CSRF攻击）
-	state := utils.GenerateMixedCode(32)
+	state := database.GenerateMixedCode(32)
 
 	// 4. 保存state到数据库（10分钟有效期）
 	if err := oauthService.SaveState(state, 0, platform.OAuthID, 10*time.Minute); err != nil {
@@ -211,7 +211,7 @@ func OAuthBind(c *gin.Context) {
 	oauthConfig := oauthService.CreateOAuthConfig(platform)
 
 	// 生成state（带上用户ID，回调时用于绑定）
-	state := utils.GenerateMixedCode(32)
+	state := database.GenerateMixedCode(32)
 	if err := oauthService.SaveState(state, currentUserID, platform.OAuthID, 10*time.Minute); err != nil {
 		constants.SendOAuthResponse(c, constants.OAuthSystemError, gin.H{"error": "生成认证状态失败"})
 		return

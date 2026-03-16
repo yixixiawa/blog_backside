@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"blog/security"
 	"blog/utils"
 
 	"github.com/gin-gonic/gin"
@@ -126,33 +127,8 @@ func InitRoutes(r *gin.Engine) {
 }
 
 func SetupMiddlewares(r *gin.Engine) {
-	// CORS中间件
-	r.Use(func(c *gin.Context) {
-		method := c.Request.Method
-		origin := c.Request.Header.Get("Origin")
-
-		// 安全修正：只允许特定的域名跨域访问，防止本地或其他恶意站点控制服务器
-		// 如果您使用 Nginx 反向代理且前后端同源，建议直接注释掉整个 CORS 中间件
-		allowedOrigins := map[string]bool{
-			"http://localhost:23357": true,
-		}
-
-		if origin != "" && allowedOrigins[origin] {
-			c.Header("Access-Control-Allow-Origin", origin)
-			c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE")
-			c.Header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
-			c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Cache-Control, Content-Language, Content-Type")
-			c.Header("Access-Control-Allow-Credentials", "true")
-		}
-
-		// 如果是 OPTIONS 请求但 Origin 不在白名单中，也可以选择拒绝，或者保持 204 但不返回 CORS 头
-		if method == "OPTIONS" {
-			c.AbortWithStatus(204)
-			return
-		}
-
-		c.Next()
-	})
+	// CORS中间件 - 使用安全的跨域配置
+	r.Use(security.SetupCORSMiddleware())
 
 	// 日志中间件
 	r.Use(gin.Logger())

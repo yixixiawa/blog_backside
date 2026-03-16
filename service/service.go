@@ -2,7 +2,6 @@ package service
 
 import (
 	"blog/database"
-	"blog/utils"
 	"fmt"
 	"time"
 )
@@ -20,7 +19,7 @@ func GenerateAndStoreVerificationCode(email string) (string, error) {
 	}
 
 	// 生成新验证码
-	code := utils.GenerateMixedCode(10)
+	code := database.GenerateMixedCode(10)
 
 	// 使用Redis存储验证码
 	key := fmt.Sprintf("email:verify:%s", email)
